@@ -6,11 +6,15 @@ const generateInviteCode = () => {
 
 export const createTrip = async (req, res) => {
     try {
-        const tripData = { ...req.body, inviteCode: generateInviteCode() };
+        console.log('Incoming createTrip request:', req.body);
+        const inviteCode = generateInviteCode();
+        const tripData = { ...req.body, inviteCode };
         const trip = new Trip(tripData);
         await trip.save();
+        console.log('Trip created successfully:', trip._id);
         res.status(201).json(trip);
     } catch (error) {
+        console.error('Error in createTrip:', error);
         res.status(400).json({ message: error.message });
     }
 };
