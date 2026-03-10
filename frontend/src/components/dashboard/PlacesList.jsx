@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, MapPin, Tag, Upload, X } from 'lucide-react';
 import { placeService } from '../../services/api';
 import { storage } from '../../config/firebase';
@@ -8,9 +8,10 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 const PlacesList = ({ tripId }) => {
     const [places, setPlaces] = useState([]);
     const [isAdding, setIsAdding] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [newPlace, setNewPlace] = useState({
         name: '',
-        ticketPrice: 0,
+        ticketPrice: '',
         description: '',
         location: '',
         image: null
@@ -26,7 +27,7 @@ const PlacesList = ({ tripId }) => {
             const response = await placeService.getPlaces(tripId);
             setPlaces(response.data);
         } catch (error) {
-            console.error('Error fetching places:', error);
+            console.error('Lỗi khi tải địa điểm:', error);
         }
     };
 
@@ -40,7 +41,7 @@ const PlacesList = ({ tripId }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading && setLoading(true);
+        setLoading(true);
 
         try {
             let imageUrl = '';
@@ -59,28 +60,28 @@ const PlacesList = ({ tripId }) => {
                 ticketPrice: Number(newPlace.ticketPrice),
                 description: newPlace.description,
                 location: newPlace.location,
-                image: imageUrl // Send the Firebase URL or empty string
+                image: imageUrl
             };
 
             await placeService.createPlace(placeData);
             setIsAdding(false);
-            setNewPlace({ name: '', ticketPrice: 0, description: '', location: '', image: null });
+            setNewPlace({ name: '', ticketPrice: '', description: '', location: '', image: null });
             setPreview(null);
             fetchPlaces();
         } catch (error) {
-            console.error('Error adding place:', error);
+            console.error('Lỗi khi thêm địa điểm:', error);
         } finally {
-            setLoading && setLoading(false);
+            setLoading(false);
         }
     };
 
     const deletePlace = async (id) => {
-        if (window.confirm('Delete this place?')) {
+        if (window.confirm('Bạn có chắc muốn xóa địa điểm này?')) {
             try {
                 await placeService.deletePlace(id);
                 fetchPlaces();
             } catch (error) {
-                console.error('Error deleting place:', error);
+                console.error('Lỗi khi xóa địa điểm:', error);
             }
         }
     };
@@ -88,13 +89,13 @@ const PlacesList = ({ tripId }) => {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold font-poppins text-slate-800">Must-visit Places</h2>
+                <h2 className="text-2xl font-bold font-poppins text-slate-800">Địa điểm Phải đến</h2>
                 <button
                     onClick={() => setIsAdding(true)}
                     className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl font-bold hover:bg-accent transition-all active:scale-95"
                 >
                     <Plus size={20} />
-                    <span>Add Place</span>
+                    <span>Thêm Địa điểm</span>
                 </button>
             </div>
 
@@ -113,27 +114,31 @@ const PlacesList = ({ tripId }) => {
                             >
                                 <X size={20} className="text-slate-400" />
                             </button>
-                            <h3 className="text-xl font-bold mb-6 font-poppins">New Destination</h3>
+                            <h3 className="text-xl font-bold mb-6 font-poppins text-slate-800">Điểm đến Mới</h3>
                             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-4">
                                     <input
-                                        required placeholder="Place Name"
+                                        required placeholder="Tên địa điểm"
                                         className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary/20"
+                                        value={newPlace.name}
                                         onChange={(e) => setNewPlace({ ...newPlace, name: e.target.value })}
                                     />
                                     <input
-                                        placeholder="Location / Address"
+                                        placeholder="Vị trí / Địa chỉ"
                                         className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary/20"
+                                        value={newPlace.location}
                                         onChange={(e) => setNewPlace({ ...newPlace, location: e.target.value })}
                                     />
                                     <input
-                                        type="number" placeholder="Ticket Price (VNĐ)"
+                                        type="number" placeholder="Giá vé (VNĐ)"
                                         className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary/20"
+                                        value={newPlace.ticketPrice}
                                         onChange={(e) => setNewPlace({ ...newPlace, ticketPrice: e.target.value })}
                                     />
                                     <textarea
-                                        placeholder="Short Description..."
+                                        placeholder="Mô tả ngắn..."
                                         className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary/20 h-24"
+                                        value={newPlace.description}
                                         onChange={(e) => setNewPlace({ ...newPlace, description: e.target.value })}
                                     />
                                 </div>
@@ -144,7 +149,7 @@ const PlacesList = ({ tripId }) => {
                                         ) : (
                                             <div className="flex flex-col items-center justify-center w-full h-full text-slate-400 p-8">
                                                 <Upload size={32} className="mb-2" />
-                                                <span className="text-center font-medium">Click to upload photo</span>
+                                                <span className="text-center font-medium">Nhấn để tải ảnh lên</span>
                                             </div>
                                         )}
                                         <input
@@ -154,8 +159,12 @@ const PlacesList = ({ tripId }) => {
                                             onChange={handleFileChange}
                                         />
                                     </div>
-                                    <button className="w-full py-4 bg-primary text-white rounded-xl font-bold hover:bg-accent transition-all shadow-lg shadow-primary/20">
-                                        Save Place
+                                    <button
+                                        type="submit"
+                                        disabled={loading}
+                                        className="w-full py-4 bg-primary text-white rounded-xl font-bold hover:bg-accent transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
+                                    >
+                                        {loading ? 'Đang lưu...' : 'Lưu Địa điểm'}
                                     </button>
                                 </div>
                             </form>
@@ -189,21 +198,21 @@ const PlacesList = ({ tripId }) => {
                                 <h3 className="text-xl font-bold text-white mb-1">{place.name}</h3>
                                 <div className="flex items-center gap-2 text-white/80 text-sm">
                                     <MapPin size={14} />
-                                    <span>{place.location || 'Unknown location'}</span>
+                                    <span>{place.location || 'Vị trí chưa xác định'}</span>
                                 </div>
                             </div>
                         </div>
                         <div className="p-6">
                             <p className="text-slate-600 mb-6 font-inter leading-relaxed line-clamp-3">
-                                {place.description || 'No description provided yet.'}
+                                {place.description || 'Chưa có mô tả cho địa điểm này.'}
                             </p>
                             <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                                 <div className="flex items-center gap-2 text-primary">
                                     <Tag size={18} />
-                                    <span className="font-bold">{place.ticketPrice?.toLocaleString()} VNĐ</span>
+                                    <span className="font-bold">{place.ticketPrice ? place.ticketPrice.toLocaleString() + ' VNĐ' : 'Miễn phí'}</span>
                                 </div>
                                 <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                                    Price per ticket
+                                    Giá vé tham khảo
                                 </div>
                             </div>
                         </div>

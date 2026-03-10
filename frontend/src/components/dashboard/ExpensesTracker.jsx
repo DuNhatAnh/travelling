@@ -8,12 +8,12 @@ const ExpensesTracker = ({ tripId, peopleCount = 2 }) => {
     const [isAdding, setIsAdding] = useState(false);
     const [newExpense, setNewExpense] = useState({
         name: '',
-        category: 'Food',
+        category: 'Ăn uống',
         price: '',
         quantity: 1
     });
 
-    const categories = ['Transport', 'Accommodation', 'Food', 'Tickets', 'Entertainment', 'Other'];
+    const categories = ['Di chuyển', 'Chỗ ở', 'Ăn uống', 'Vé tham quan', 'Giải trí', 'Khác'];
 
     useEffect(() => {
         fetchExpenses();
@@ -24,7 +24,7 @@ const ExpensesTracker = ({ tripId, peopleCount = 2 }) => {
             const response = await expenseService.getExpenses(tripId);
             setExpenses(response.data);
         } catch (error) {
-            console.error('Error fetching expenses:', error);
+            console.error('Lỗi khi tải chi phí:', error);
         }
     };
 
@@ -33,10 +33,10 @@ const ExpensesTracker = ({ tripId, peopleCount = 2 }) => {
         try {
             await expenseService.createExpense({ ...newExpense, tripId, price: Number(newExpense.price) });
             setIsAdding(false);
-            setNewExpense({ name: '', category: 'Food', price: '', quantity: 1 });
+            setNewExpense({ name: '', category: 'Ăn uống', price: '', quantity: 1 });
             fetchExpenses();
         } catch (error) {
-            console.error('Error adding expense:', error);
+            console.error('Lỗi khi thêm chi phí:', error);
         }
     };
 
@@ -45,7 +45,7 @@ const ExpensesTracker = ({ tripId, peopleCount = 2 }) => {
             await expenseService.deleteExpense(id);
             fetchExpenses();
         } catch (error) {
-            console.error('Error deleting expense:', error);
+            console.error('Lỗi khi xóa chi phí:', error);
         }
     };
 
@@ -54,13 +54,13 @@ const ExpensesTracker = ({ tripId, peopleCount = 2 }) => {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold font-poppins text-slate-800">Trip Expenses</h2>
+                <h2 className="text-2xl font-bold font-poppins text-slate-800">Chi phí Chuyến đi</h2>
                 <button
                     onClick={() => setIsAdding(!isAdding)}
                     className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl font-bold hover:bg-accent transition-all active:scale-95"
                 >
                     <Plus size={20} />
-                    <span>Add Expense</span>
+                    <span>Thêm Chi phí</span>
                 </button>
             </div>
 
@@ -75,7 +75,7 @@ const ExpensesTracker = ({ tripId, peopleCount = 2 }) => {
                         <form onSubmit={handleSubmit} className="glass-card p-6 bg-white border-2 border-primary/10 grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                             <div className="md:col-span-1">
                                 <input
-                                    required placeholder="Expense name"
+                                    required placeholder="Tên khoản chi"
                                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary/20"
                                     value={newExpense.name}
                                     onChange={(e) => setNewExpense({ ...newExpense, name: e.target.value })}
@@ -92,20 +92,20 @@ const ExpensesTracker = ({ tripId, peopleCount = 2 }) => {
                             </div>
                             <div className="flex gap-2">
                                 <input
-                                    required type="number" placeholder="Price"
+                                    required type="number" placeholder="Giá"
                                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary/20"
                                     value={newExpense.price}
                                     onChange={(e) => setNewExpense({ ...newExpense, price: e.target.value })}
                                 />
                                 <input
-                                    type="number" placeholder="Qty"
+                                    type="number" placeholder="SL"
                                     className="w-32 px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary/20"
                                     value={newExpense.quantity}
                                     onChange={(e) => setNewExpense({ ...newExpense, quantity: e.target.value })}
                                 />
                             </div>
                             <button className="bg-primary text-white rounded-xl font-bold hover:bg-accent transition-all">
-                                Add Item
+                                Thêm Mục
                             </button>
                         </form>
                     </motion.div>
@@ -116,12 +116,12 @@ const ExpensesTracker = ({ tripId, peopleCount = 2 }) => {
                 <table className="w-full text-left">
                     <thead className="bg-slate-50 text-slate-500 font-bold text-sm uppercase tracking-wider">
                         <tr>
-                            <th className="px-6 py-4">Item</th>
-                            <th className="px-6 py-4">Category</th>
-                            <th className="px-6 py-4">Price</th>
-                            <th className="px-6 py-4">Quantity</th>
-                            <th className="px-6 py-4">Total</th>
-                            <th className="px-6 py-4">Action</th>
+                            <th className="px-6 py-4">Khoản chi</th>
+                            <th className="px-6 py-4">Danh mục</th>
+                            <th className="px-6 py-4">Giá</th>
+                            <th className="px-6 py-4">Số lượng</th>
+                            <th className="px-6 py-4">Tổng</th>
+                            <th className="px-6 py-4">Hành động</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -129,7 +129,7 @@ const ExpensesTracker = ({ tripId, peopleCount = 2 }) => {
                             <tr key={expense._id} className="hover:bg-slate-50 transition-colors">
                                 <td className="px-6 py-4 font-bold text-slate-700">{expense.name}</td>
                                 <td className="px-6 py-4">
-                                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${categoryStyles[expense.category]}`}>
+                                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${categoryStyles[expense.category] || categoryStyles['Khác']}`}>
                                         {expense.category}
                                     </span>
                                 </td>
@@ -148,7 +148,7 @@ const ExpensesTracker = ({ tripId, peopleCount = 2 }) => {
 
                 {expenses.length === 0 && (
                     <div className="p-12 text-center text-slate-400">
-                        No expenses recorded yet.
+                        Chưa có khoản chi nào được ghi lại.
                     </div>
                 )}
             </div>
@@ -158,16 +158,16 @@ const ExpensesTracker = ({ tripId, peopleCount = 2 }) => {
                 <div className="glass-card p-6 bg-gradient-to-br from-primary to-accent text-white">
                     <div className="flex items-center gap-3 mb-4 opacity-80">
                         <Users size={20} />
-                        <span className="font-bold">Total Cost for {peopleCount} People</span>
+                        <span className="font-bold">Tổng Chi phí cho {peopleCount} người</span>
                     </div>
                     <div className="text-4xl font-bold mb-2">{totalCost.toLocaleString()} VNĐ</div>
-                    <div className="text-white/80 font-medium">Average {(totalCost / peopleCount).toLocaleString()} VNĐ per person</div>
+                    <div className="text-white/80 font-medium">Trung bình {(totalCost / peopleCount).toLocaleString()} VNĐ mỗi người</div>
                 </div>
 
                 <div className="glass-card p-6 bg-white border border-slate-100">
                     <div className="flex items-center gap-3 mb-6 text-slate-500 font-bold uppercase text-xs tracking-wider">
                         <TrendingUp size={18} className="text-primary" />
-                        <span>Top Categories</span>
+                        <span>Danh mục hàng đầu</span>
                     </div>
                     <div className="space-y-4">
                         {categories.slice(0, 3).map(cat => {
@@ -197,6 +197,12 @@ const ExpensesTracker = ({ tripId, peopleCount = 2 }) => {
 };
 
 const categoryStyles = {
+    'Di chuyển': 'text-blue-500 bg-blue-50 border-blue-100',
+    'Chỗ ở': 'text-purple-500 bg-purple-50 border-purple-100',
+    'Ăn uống': 'text-orange-500 bg-orange-50 border-orange-100',
+    'Vé tham quan': 'text-emerald-500 bg-emerald-50 border-emerald-100',
+    'Giải trí': 'text-pink-500 bg-pink-50 border-pink-100',
+    'Khác': 'text-slate-500 bg-slate-50 border-slate-100',
     Transport: 'text-blue-500 bg-blue-50 border-blue-100',
     Accommodation: 'text-purple-500 bg-purple-50 border-purple-100',
     Food: 'text-orange-500 bg-orange-50 border-orange-100',

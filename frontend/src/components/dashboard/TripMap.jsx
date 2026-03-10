@@ -30,12 +30,12 @@ const TripMap = ({ tripId }) => {
                     <div className="w-20 h-20 bg-primary/20 backdrop-blur-md rounded-3xl flex items-center justify-center mx-auto mb-8 animate-pulse text-primary border border-primary/30">
                         <MapPin size={40} />
                     </div>
-                    <h3 className="text-3xl font-bold font-poppins text-white mb-4">Interactive Map</h3>
+                    <h3 className="text-3xl font-bold font-poppins text-white mb-4">Bản đồ Tương tác</h3>
                     <p className="text-slate-400 font-inter mb-8 text-lg">
-                        Visualise your trip locations and discover nearby restaurants, hotels, and tourist spots.
+                        Hình ảnh hóa các địa điểm trong chuyến đi của bạn và khám phá các nhà hàng, khách sạn và điểm du lịch lân cận.
                     </p>
                     <div className="inline-block px-4 py-2 bg-white/10 backdrop-blur rounded-xl text-white/60 text-sm font-medium border border-white/10 uppercase tracking-widest">
-                        API Key Required for Live Maps
+                        Cần API Key để sử dụng Bản đồ trực tuyến
                     </div>
                 </div>
             </div>

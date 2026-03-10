@@ -21,6 +21,11 @@ const CostSummary = ({ tripId }) => {
     const total = expenses.reduce((a, b) => a + (b.price * b.quantity), 0);
 
     const categories = [
+        { name: 'Di chuyển', color: 'bg-blue-400' },
+        { name: 'Chỗ ở', color: 'bg-purple-400' },
+        { name: 'Ăn uống', color: 'bg-orange-400' },
+        { name: 'Vé tham quan', color: 'bg-emerald-400' },
+        { name: 'Khác', color: 'bg-slate-400' },
         { name: 'Transport', color: 'bg-blue-400' },
         { name: 'Accommodation', color: 'bg-purple-400' },
         { name: 'Food', color: 'bg-orange-400' },
@@ -31,7 +36,7 @@ const CostSummary = ({ tripId }) => {
     return (
         <div className="glass-card p-6 bg-white overflow-hidden relative">
             <div className="flex items-center justify-between mb-6">
-                <h3 className="font-bold text-slate-800 font-poppins">Cost Summary</h3>
+                <h3 className="font-bold text-slate-800 font-poppins">Tóm tắt Chi phí</h3>
                 <PieChart size={20} className="text-primary" />
             </div>
 
@@ -53,14 +58,14 @@ const CostSummary = ({ tripId }) => {
             </div>
 
             <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-slate-400 font-bold text-sm uppercase">Total Trip</span>
+                <span className="text-slate-400 font-bold text-sm uppercase">Tổng cộng</span>
                 <span className="text-xl font-bold text-primary">{total.toLocaleString()} VNĐ</span>
             </div>
 
             <div className="mt-4 p-3 bg-primary/5 rounded-xl flex gap-3">
                 <Info size={18} className="text-primary shrink-0" />
                 <p className="text-xs text-primary/80 leading-relaxed font-medium">
-                    Split costs easily and track your budget in real-time.
+                    Chia nhỏ chi phí dễ dàng và theo dõi ngân sách trong thời gian thực.
                 </p>
             </div>
         </div>

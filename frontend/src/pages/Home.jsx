@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, MapPin, Calendar, Users, ArrowRight, Share2, Users2 } from 'lucide-react';
+import { Plus, MapPin, Calendar, Users, ArrowRight, Share2, Users2, Hash } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { tripService } from '../services/api';
 import CreateTripModal from '../components/CreateTripModal';
@@ -10,6 +10,7 @@ const Home = () => {
     const [trips, setTrips] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -19,8 +20,6 @@ const Home = () => {
     const fetchTrips = async () => {
         try {
             const response = await tripService.getTrips();
-            // In a real app with auth, we'd only get user's trips.
-            // For this "setup", we filter based on IDs stored in localStorage
             const myTripIds = JSON.parse(localStorage.getItem('myTrips') || '[]');
             const joinedTripIds = JSON.parse(localStorage.getItem('joinedTrips') || '[]');
             const relevantIds = [...myTripIds, ...joinedTripIds];
@@ -28,7 +27,9 @@ const Home = () => {
             const filteredTrips = response.data.filter(t => relevantIds.includes(t._id));
             setTrips(filteredTrips);
         } catch (error) {
-            console.error('Error fetching trips:', error);
+            console.error('Lỗi khi tải danh sách chuyến đi:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -58,12 +59,12 @@ const Home = () => {
                         className="max-w-2xl text-white"
                     >
                         <h1 className="text-5xl md:text-7xl font-bold font-poppins mb-6 leading-tight">
-                            Plan Beautiful <br />
-                            <span className="text-primary">Trips Together</span>
+                            Lên Kế Hoạch <br />
+                            <span className="text-primary">Chuyến Đi Cho Cặp Đôi</span>
                         </h1>
                         <p className="text-xl md:text-2xl opacity-90 mb-10 font-inter leading-relaxed">
-                            Lên kế hoạch chuyến đi, lưu những nơi muốn đến và tính chi phí cho chuyến du lịch của hai bạn.
-                            <br /><span className="text-primary font-bold">Connect with your partner from any device.</span>
+                            Lên lịch trình, lưu giữ địa điểm yêu thích và quản lý chi phí cùng người thương.
+                            <br /><span className="text-primary font-bold">Kết nối hai bạn dù đang ở bất cứ đâu.</span>
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <button
@@ -71,14 +72,14 @@ const Home = () => {
                                 className="px-8 py-4 bg-primary rounded-2xl font-bold text-lg hover:bg-accent transition-all flex items-center gap-2 shadow-xl shadow-primary/20 active:scale-95"
                             >
                                 <Plus size={24} />
-                                <span>Create New Trip</span>
+                                <span>Tạo Chuyến đi Mới</span>
                             </button>
                             <button
                                 onClick={() => setIsJoinModalOpen(true)}
                                 className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl font-bold text-lg hover:bg-white/20 transition-all flex items-center gap-2 active:scale-95"
                             >
                                 <Share2 size={24} />
-                                <span>Join with Code</span>
+                                <span>Tham gia bằng Mã</span>
                             </button>
                         </div>
                     </motion.div>
@@ -88,18 +89,22 @@ const Home = () => {
             {/* Trips Row */}
             <section>
                 <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-3xl font-bold font-poppins text-slate-800">Your Shared Adventures</h2>
+                    <h2 className="text-3xl font-bold font-poppins text-slate-800">Hành trình của Hai bạn</h2>
                     <div className="flex gap-4">
                         <button
                             onClick={() => setIsJoinModalOpen(true)}
                             className="flex items-center gap-2 text-slate-500 font-bold hover:text-primary transition-colors"
                         >
-                            <ArrowRight size={18} className="rotate-180" /> Join via Code
+                            <ArrowRight size={18} className="rotate-180" /> Nhập mã Tham gia
                         </button>
                     </div>
                 </div>
 
-                {trips.length > 0 ? (
+                {loading ? (
+                    <div className="flex justify-center p-20">
+                        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                ) : trips.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {trips.map((trip) => (
                             <motion.div
@@ -128,11 +133,11 @@ const Home = () => {
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-2 text-sm">
                                                 <Calendar size={18} className="text-primary" />
-                                                <span>{new Date(trip.startDate).toLocaleDateString()}</span>
+                                                <span>{new Date(trip.startDate).toLocaleDateString('vi-VN')}</span>
                                             </div>
                                             <div className="flex items-center gap-2 text-sm">
                                                 <Users2 size={18} className="text-primary" />
-                                                <span>{trip.people} Participants</span>
+                                                <span>{trip.people} Thành viên</span>
                                             </div>
                                         </div>
                                     </div>
@@ -145,20 +150,20 @@ const Home = () => {
                         <div className="bg-white p-4 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 shadow-soft">
                             <Users size={40} className="text-primary" />
                         </div>
-                        <h3 className="text-2xl font-bold mb-2">No active journeys</h3>
-                        <p className="text-slate-500 mb-8 max-w-sm mx-auto">Create a new trip or join one using a code shared by your partner.</p>
+                        <h3 className="text-2xl font-bold mb-2 text-slate-800">Chưa có hành trình nào</h3>
+                        <p className="text-slate-500 mb-8 max-w-sm mx-auto">Hãy bắt đầu tạo chuyến đi mới hoặc nhập mã mời từ bạn đời của mình nhé.</p>
                         <div className="flex justify-center gap-4">
                             <button
                                 onClick={() => setIsModalOpen(true)}
                                 className="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-accent transition-all active:scale-95 shadow-lg shadow-primary/20"
                             >
-                                Start New Trip
+                                Bắt đầu Chuyến đi
                             </button>
                             <button
                                 onClick={() => setIsJoinModalOpen(true)}
                                 className="px-8 py-3 bg-white text-primary border border-primary/20 rounded-xl font-bold hover:bg-slate-50 transition-all active:scale-95"
                             >
-                                Join with Code
+                                Tham gia bằng Mã
                             </button>
                         </div>
                     </div>

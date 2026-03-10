@@ -22,7 +22,7 @@ const JoinTripModal = ({ onClose, onSuccess }) => {
             }
             onSuccess(response.data._id);
         } catch (err) {
-            setError('Invalid invite code. Please try again.');
+            setError('Mã mời không hợp lệ. Vui lòng thử lại.');
         } finally {
             setLoading(false);
         }
@@ -50,12 +50,12 @@ const JoinTripModal = ({ onClose, onSuccess }) => {
                     <X size={20} className="text-slate-400" />
                 </button>
 
-                <h2 className="text-3xl font-bold font-poppins mb-2 text-slate-800">Join a Trip</h2>
-                <p className="text-slate-500 mb-8">Enter the 6-character code shared by your partner.</p>
+                <h2 className="text-3xl font-bold font-poppins mb-2 text-slate-800">Tham gia Chuyến đi</h2>
+                <p className="text-slate-500 mb-8">Nhập mã mời 6 chữ số mà người bạn của bạn đã chia sẻ.</p>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700 ml-1 uppercase tracking-wider">Invite Code</label>
+                        <label className="text-sm font-bold text-slate-700 ml-1 uppercase tracking-wider">Mã Mời</label>
                         <div className="relative">
                             <Hash className="absolute left-4 top-1/2 -translate-y-1/2 text-primary" size={20} />
                             <input
@@ -75,7 +75,7 @@ const JoinTripModal = ({ onClose, onSuccess }) => {
                         disabled={loading || code.length < 6}
                         className="w-full py-4 bg-primary text-white rounded-2xl font-bold text-lg hover:bg-accent transition-all active:scale-[0.98] shadow-lg shadow-primary/20 disabled:opacity-50 flex items-center justify-center gap-2"
                     >
-                        {loading ? 'Searching...' : 'Join Adventurers'}
+                        {loading ? 'Đang tìm...' : 'Bắt đầu Hành trình'}
                         {!loading && <ArrowRight size={20} />}
                     </button>
                 </form>

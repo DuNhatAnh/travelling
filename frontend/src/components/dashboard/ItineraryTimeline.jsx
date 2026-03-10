@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Clock, MapPin, Trash2, Calendar } from 'lucide-react';
 import { timelineService } from '../../services/api';
 
@@ -21,7 +21,7 @@ const ItineraryTimeline = ({ tripId }) => {
             const response = await timelineService.getTimeline(tripId);
             setTimeline(response.data);
         } catch (error) {
-            console.error('Error fetching timeline:', error);
+            console.error('Lỗi khi tải lịch trình:', error);
         }
     };
 
@@ -33,7 +33,7 @@ const ItineraryTimeline = ({ tripId }) => {
             setNewItem({ ...newItem, activity: '' });
             fetchTimeline();
         } catch (error) {
-            console.error('Error adding timeline item:', error);
+            console.error('Lỗi khi thêm sự kiện:', error);
         }
     };
 
@@ -42,7 +42,7 @@ const ItineraryTimeline = ({ tripId }) => {
             await timelineService.deleteTimeline(id);
             fetchTimeline();
         } catch (error) {
-            console.error('Error deleting timeline item:', error);
+            console.error('Lỗi khi xóa sự kiện:', error);
         }
     };
 
@@ -58,13 +58,13 @@ const ItineraryTimeline = ({ tripId }) => {
     return (
         <div className="space-y-10">
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold font-poppins text-slate-800">Trip Schedule</h2>
+                <h2 className="text-2xl font-bold font-poppins text-slate-800">Lịch trình Chuyến đi</h2>
                 <button
                     onClick={() => setIsAdding(!isAdding)}
                     className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl font-bold hover:bg-accent transition-all active:scale-95"
                 >
                     <Plus size={20} />
-                    <span>Add Event</span>
+                    <span>Thêm Sự kiện</span>
                 </button>
             </div>
 
@@ -78,7 +78,7 @@ const ItineraryTimeline = ({ tripId }) => {
                     >
                         <form onSubmit={handleSubmit} className="flex flex-wrap gap-4 items-end">
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-400 uppercase">Day</label>
+                                <label className="text-xs font-bold text-slate-400 uppercase">Ngày</label>
                                 <input
                                     type="number" min="1"
                                     className="w-20 px-4 py-2.5 rounded-xl border border-slate-200"
@@ -86,7 +86,7 @@ const ItineraryTimeline = ({ tripId }) => {
                                 />
                             </div>
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-400 uppercase">Time</label>
+                                <label className="text-xs font-bold text-slate-400 uppercase">Giờ</label>
                                 <input
                                     type="time"
                                     className="w-32 px-4 py-2.5 rounded-xl border border-slate-200"
@@ -94,15 +94,15 @@ const ItineraryTimeline = ({ tripId }) => {
                                 />
                             </div>
                             <div className="flex-1 space-y-1">
-                                <label className="text-xs font-bold text-slate-400 uppercase">Activity</label>
+                                <label className="text-xs font-bold text-slate-400 uppercase">Hoạt động</label>
                                 <input
-                                    required placeholder="What are you doing? (e.g. Lunch at Lake)"
+                                    required placeholder="Bạn dự định làm gì? (v.d. Ăn trưa tại hồ)"
                                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200"
                                     value={newItem.activity} onChange={e => setNewItem({ ...newItem, activity: e.target.value })}
                                 />
                             </div>
                             <button className="px-6 py-2.5 bg-primary text-white rounded-xl font-bold hover:bg-accent transition-all">
-                                Save
+                                Lưu
                             </button>
                         </form>
                     </motion.div>
@@ -116,7 +116,7 @@ const ItineraryTimeline = ({ tripId }) => {
                             <div className="w-12 h-12 rounded-2xl bg-primary text-white flex items-center justify-center font-bold text-xl shadow-lg shadow-primary/20">
                                 {day}
                             </div>
-                            <h3 className="text-2xl font-bold text-slate-800">Day {day}</h3>
+                            <h3 className="text-2xl font-bold text-slate-800">Ngày {day}</h3>
                         </div>
 
                         <div className="ml-6 space-y-6 relative border-l-2 border-primary/20 pl-10">
@@ -141,7 +141,7 @@ const ItineraryTimeline = ({ tripId }) => {
                                                 <h4 className="text-lg font-bold text-slate-800">{item.activity}</h4>
                                                 <div className="flex items-center gap-1 text-slate-400 text-sm">
                                                     <MapPin size={14} />
-                                                    <span>Location tbd</span>
+                                                    <span>Địa điểm tùy chọn</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -158,7 +158,7 @@ const ItineraryTimeline = ({ tripId }) => {
                     </div>
                 )) : (
                     <div className="text-center py-20 text-slate-400 font-medium">
-                        Your schedule is looking a bit empty. Start adding activities!
+                        Lịch trình của bạn đang trống. Hãy bắt đầu thêm các hoạt động!
                     </div>
                 )}
             </div>

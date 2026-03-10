@@ -10,7 +10,7 @@ const CreateTripModal = ({ onClose, onSuccess }) => {
         startDate: '',
         endDate: '',
         people: 2,
-        transport: 'Airplane'
+        transport: 'Máy bay'
     });
     const [loading, setLoading] = useState(false);
 
@@ -25,17 +25,17 @@ const CreateTripModal = ({ onClose, onSuccess }) => {
             const response = await tripService.createTrip(formData);
             onSuccess(response.data);
         } catch (error) {
-            console.error('Error creating trip:', error);
+            console.error('Lỗi khi tạo chuyến đi:', error);
         } finally {
             setLoading(false);
         }
     };
 
     const transportOptions = [
-        { name: 'Airplane', icon: Plane },
-        { name: 'Train', icon: Train },
-        { name: 'Bus/Car', icon: Car },
-        { name: 'Ship', icon: Ship },
+        { name: 'Máy bay', icon: Plane },
+        { name: 'Tàu hỏa', icon: Train },
+        { name: 'Xe khách/Ô tô', icon: Car },
+        { name: 'Tàu thủy', icon: Ship },
     ];
 
     return (
@@ -60,29 +60,29 @@ const CreateTripModal = ({ onClose, onSuccess }) => {
                     <X size={20} className="text-slate-400" />
                 </button>
 
-                <h2 className="text-3xl font-bold font-poppins mb-2 text-slate-800">New Adventure</h2>
-                <p className="text-slate-500 mb-8">Tell us about your next dream destination.</p>
+                <h2 className="text-3xl font-bold font-poppins mb-2 text-slate-800">Hành trình Mới</h2>
+                <p className="text-slate-500 mb-8">Hãy kể cho chúng mình nghe về điểm đến mơ ước tiếp theo của hai bạn.</p>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700 ml-1">Trip Name</label>
+                        <label className="text-sm font-bold text-slate-700 ml-1">Tên Chuyến đi</label>
                         <input
                             required
                             name="name"
-                            placeholder="e.g. Đà Lạt Chill 3 ngày"
+                            placeholder="v.d. Đà Lạt Chill 3 ngày"
                             className="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-lg"
                             onChange={handleChange}
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700 ml-1">Destination</label>
+                        <label className="text-sm font-bold text-slate-700 ml-1">Điểm đến</label>
                         <div className="relative">
                             <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
                             <input
                                 required
                                 name="destination"
-                                placeholder="Where are you going?"
+                                placeholder="Bạn muốn đi đâu?"
                                 className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-lg"
                                 onChange={handleChange}
                             />
@@ -91,7 +91,7 @@ const CreateTripModal = ({ onClose, onSuccess }) => {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700 ml-1">Start Date</label>
+                            <label className="text-sm font-bold text-slate-700 ml-1">Ngày đi</label>
                             <input
                                 required
                                 type="date"
@@ -101,7 +101,7 @@ const CreateTripModal = ({ onClose, onSuccess }) => {
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700 ml-1">End Date</label>
+                            <label className="text-sm font-bold text-slate-700 ml-1">Ngày về</label>
                             <input
                                 required
                                 type="date"
@@ -114,7 +114,7 @@ const CreateTripModal = ({ onClose, onSuccess }) => {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700 ml-1">People</label>
+                            <label className="text-sm font-bold text-slate-700 ml-1">Số người</label>
                             <div className="relative">
                                 <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                                 <input
@@ -127,7 +127,7 @@ const CreateTripModal = ({ onClose, onSuccess }) => {
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700 ml-1">Transport</label>
+                            <label className="text-sm font-bold text-slate-700 ml-1">Phương tiện</label>
                             <select
                                 name="transport"
                                 className="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none bg-white"
@@ -145,7 +145,7 @@ const CreateTripModal = ({ onClose, onSuccess }) => {
                         disabled={loading}
                         className="w-full py-4 bg-primary text-white rounded-2xl font-bold text-lg hover:bg-accent transition-all active:scale-[0.98] shadow-lg shadow-primary/20 disabled:opacity-50 mt-4"
                     >
-                        {loading ? 'Creating...' : 'Create Trip'}
+                        {loading ? 'Đang tạo...' : 'Tạo Chuyến đi'}
                     </button>
                 </form>
             </motion.div>
