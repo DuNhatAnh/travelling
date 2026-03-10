@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Trash2, MapPin, Tag, Upload, X } from 'lucide-react';
 import { placeService } from '../../services/api';
+import { storage } from '../../config/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const PlacesList = ({ tripId }) => {
     const [places, setPlaces] = useState([]);
@@ -38,22 +40,37 @@ const PlacesList = ({ tripId }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const formData = new FormData();
-        formData.append('tripId', tripId);
-        formData.append('name', newPlace.name);
-        formData.append('ticketPrice', newPlace.ticketPrice);
-        formData.append('description', newPlace.description);
-        formData.append('location', newPlace.location);
-        if (newPlace.image) formData.append('image', newPlace.image);
+        setLoading && setLoading(true);
 
         try {
-            await placeService.createPlace(formData);
+            let imageUrl = '';
+
+            // Upload to Firebase if image exists
+            if (newPlace.image) {
+                const storageRef = ref(storage, `places/${Date.now()}_${newPlace.image.name}`);
+                const snapshot = await uploadBytes(storageRef, newPlace.image);
+                imageUrl = await getDownloadURL(snapshot.ref);
+            }
+
+            // Prepare data
+            const placeData = {
+                tripId,
+                name: newPlace.name,
+                ticketPrice: Number(newPlace.ticketPrice),
+                description: newPlace.description,
+                location: newPlace.location,
+                image: imageUrl // Send the Firebase URL or empty string
+            };
+
+            await placeService.createPlace(placeData);
             setIsAdding(false);
             setNewPlace({ name: '', ticketPrice: 0, description: '', location: '', image: null });
             setPreview(null);
             fetchPlaces();
         } catch (error) {
             console.error('Error adding place:', error);
+        } finally {
+            setLoading && setLoading(false);
         }
     };
 

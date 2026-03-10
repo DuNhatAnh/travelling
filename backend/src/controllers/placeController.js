@@ -16,8 +16,8 @@ export const upload = multer({ storage });
 
 export const createPlace = async (req, res) => {
     try {
-        const { tripId, name, ticketPrice, description, location } = req.body;
-        const image = req.file ? `/uploads/${req.file.filename}` : '';
+        const { tripId, name, ticketPrice, description, location, image: bodyImage } = req.body;
+        const image = req.file ? `/uploads/${req.file.filename}` : (bodyImage || '');
 
         const place = new Place({
             tripId,

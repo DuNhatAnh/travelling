@@ -40,6 +40,11 @@ app.get('/', (req, res) => {
     res.send('Trip Planner API is running...');
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+// For Vercel, we export the app and only listen if not in a serverless environment
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+}
+
+export default app;

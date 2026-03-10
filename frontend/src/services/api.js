@@ -16,9 +16,7 @@ export const tripService = {
 
 export const placeService = {
     getPlaces: (tripId) => api.get(`/places/${tripId}`),
-    createPlace: (formData) => api.post('/places', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-    }),
+    createPlace: (data) => api.post('/places', data),
     deletePlace: (id) => api.delete(`/places/${id}`),
 };
 
